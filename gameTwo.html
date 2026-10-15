@@ -1,0 +1,165 @@
+<style>
+    /* 초록 상자 (노란 상자가 뜨는 판) */
+    #field2 {
+        position: relative;
+        margin: 0 auto;
+        border: 2px solid green;
+        width: 600px;
+        height: 440px;
+    }
+
+    /* 노란 상자 */
+    .target2 {
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        box-sizing: border-box;
+        background: gold;
+        border: 1px solid black;
+        cursor: pointer;
+    }
+</style>
+
+<p id="info">시작 버튼을 눌러 주세요</p>
+<button id="startBtn">게임 시작</button>
+<button onclick="loadDoc2()">다시 시작</button>
+
+<div id="field2"></div>
+
+<h3>상위 5개 기록</h3>
+<ol id="ranking"></ol>
+
+<script>
+    (function () {
+        const field = document.getElementById('field2');
+        const info = document.getElementById('info');
+        const startBtn = document.getElementById('startBtn');
+
+        // ===== 설정값: 여기 숫자만 바꿔서 난이도 조절 =====
+        const timeLimit = 30;             // 제한시간(초)
+        const targetSize = 50;            // 노란 상자 크기
+        const levelUp = [5, 10];          // 이만큼 잡으면 2단계, 3단계로 빨라짐
+
+        // 노란 상자가 떠 있는 시간(ms): [0~4개 / 5~9개 / 10개 이상]
+        const showTimes = [1000, 700, 450];
+        // 사라진 뒤 다음 상자가 뜰 때까지 쉬는 시간(ms)
+        const gaps = [500, 350, 200];
+
+        const fieldW = field.clientWidth;     // 판의 가로 크기 (600)
+        const fieldH = field.clientHeight;    // 판의 세로 크기 (440)
+
+        let endTime = 0;             // 게임이 끝나는 시각
+        let running = false;         // 게임이 진행 중인지
+        let target = null;           // 지금 떠 있는 노란 상자 (없으면 null)
+        let hideAt = 0;              // 노란 상자가 사라질 시각
+        let nextSpawn = 0;           // 다음 노란 상자가 뜰 시각
+        let score = 0;               // 잡은 개수
+
+        // 지금 몇 단계 속도인지 (0, 1, 2)
+        function getLevel() {
+            if (score >= levelUp[1]) { return 2; }
+            if (score >= levelUp[0]) { return 1; }
+            return 0;
+        }
+
+        // 저장된 기록을 불러오기 (없으면 빈 배열)
+        function loadRecords() {
+            const saved = localStorage.getItem('records2v4');
+            if (saved == null) {
+                return [];
+            }
+            return JSON.parse(saved);
+        }
+
+        // 순위를 화면에 표시
+        function showRanking() {
+            const records = loadRecords();
+            let html = "";
+            for (let i = 0; i < records.length; i++) {
+                html = html + "<li>" + records[i] + "개</li>";
+            }
+            document.getElementById('ranking').innerHTML = html;
+        }
+
+        // 노란 상자를 눌렀을 때
+        function hit() {
+            if (!running) { return; }   // 게임이 끝난 뒤에는 무시
+
+            score = score + 1;
+            target.remove();
+            target = null;
+            nextSpawn = Date.now() + gaps[getLevel()];   // 잠깐 쉬었다가 다음 상자
+        }
+
+        function finish() {
+            running = false;
+            clearInterval(timer);   // 메인 페이지의 timer 를 씀
+
+            // 떠 있는 노란 상자가 있으면 치우기
+            if (target != null) {
+                target.remove();
+                target = null;
+            }
+
+            info.innerText = "시간 종료! " + score + "개 잡았어요";
+
+            // 이번 기록을 넣고, 많이 잡은 순서로 정렬해서 상위 5개만 저장
+            const records = loadRecords();
+            records.push(score);
+            records.sort(function (a, b) { return b - a; });
+            const top5 = records.slice(0, 5);
+            localStorage.setItem('records2v4', JSON.stringify(top5));
+
+            showRanking();
+        }
+
+        // 0.02초(20ms)마다 계속 실행되는 함수
+        function update() {
+            const now = Date.now();
+            const timeLeft = (endTime - now) / 1000;   // 남은 시간(초)
+
+            // 제한시간이 끝나면 종료
+            if (timeLeft <= 0) {
+                finish();
+                return;
+            }
+
+            const level = getLevel();
+
+            // 노란 상자가 사라질 시간이 되면 치우고, 잠깐 쉬었다가 다음 상자 (못 잡아도 게임은 계속)
+            if (target != null && now >= hideAt) {
+                target.remove();
+                target = null;
+                nextSpawn = now + gaps[level];
+            }
+
+            // 노란 상자가 없고, 뜰 시간이 됐으면 판 안 아무 곳에나 만들기
+            if (target == null && now >= nextSpawn) {
+                const left = Math.random() * (fieldW - targetSize);
+                const top = Math.random() * (fieldH - targetSize);
+
+                target = document.createElement('div');
+                target.className = 'target2';
+                target.style.left = left + "px";
+                target.style.top = top + "px";
+                target.addEventListener('click', hit);
+                field.appendChild(target);
+
+                hideAt = now + showTimes[level];   // 이 시각이 되면 저절로 사라짐
+            }
+
+            info.innerText = "남은 시간: " + timeLeft.toFixed(1) + "초 / 속도 " + (level + 1) + "단계 / 잡은 개수: " + score;
+        }
+
+        function startGame() {
+            endTime = Date.now() + timeLimit * 1000;
+            nextSpawn = Date.now() + 500;   // 시작하고 0.5초 뒤에 첫 상자
+            running = true;
+            startBtn.disabled = true;       // 중복 클릭 방지
+            timer = setInterval(update, 20);
+        }
+
+        startBtn.addEventListener('click', startGame);
+        showRanking();
+    })();
+</script>
