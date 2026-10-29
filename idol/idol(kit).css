@@ -1,0 +1,27 @@
+body {
+    text-align: center;
+}
+
+/* 2. 모든 박스(컨테이너, 카드, 뉴스 등)를 가운데로 정렬 (float 해제 필수!) */
+.box, .card, .news, .banner, aside, #main, #main1 {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    float: none !important; /* float이 있으면 중앙 정렬이 안 되므로 반드시 해제 */
+    text-align: center;
+}
+
+/* 3. 모든 이미지 가운데 정렬 */
+img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* 4. 리스트 및 세부 항목 가운데 정렬 */
+li.row1 {
+    text-align: center;
+}
+
+#main1 .items {
+    justify-content: center; /* 곡 목록 아이템들도 가운데로 */
+}

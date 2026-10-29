@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>틱택토</title>
+    <style>
+        .item {
+            border: 1px solid black;
+            border-collapse: collapse;
+            width: 150px;
+            height: 150px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <table id="box">
+        <tr>
+            <td id="one" class="item"></td>
+            <td id="two" class="item"></td>
+            <td id="three" class="item"></td>
+        </tr>
+        <tr>
+            <td id="four" class="item"></td>
+            <td id="five" class="item"></td>
+            <td id="six" class="item"></td>
+        </tr>
+        <tr>
+            <td id="seven" class="item"></td>
+            <td id="eight" class="item"></td>
+            <td id="nine" class="item"></td>
+        </tr>
+    </table>
+
+    <!-- ★ 추가: alert 대신 결과를 보여줄 곳 -->
+    <p id="msg" style="font-size: 24px; font-weight: bold;"></p>
+
+
+    <script>
+        // ★ 추가: 결과 글자를 화면에 표시하는 함수 (alert 대신)
+        function showMsg(text) {
+            document.getElementById('msg').textContent = text;
+        }
+
+        const box = document.getElementById('box');
+        const td = document.querySelectorAll("td");
+
+        const one = document.getElementById('one');
+        const two = document.getElementById('two');
+        const three = document.getElementById('three');
+        const four = document.getElementById('four');
+        const five = document.getElementById('five');
+        const six = document.getElementById('six');
+        const seven = document.getElementById('seven');
+        const eight = document.getElementById('eight');
+        const nine = document.getElementById('nine');
+
+        // 유저가 클릭한 곳 색깔이 바뀜
+        box.addEventListener('click', function (e) {
+            const user = e.target;
+
+            // 테이블이 아닌 칸을 누르면 패스
+            if (user.tagName !== "TD") {
+                return;
+            }
+            // 이미 색칠된 칸을 누르면 패스
+            if (user.style.backgroundColor !== "") {
+                return;
+            }
+            console.log(user);
+            user.style.backgroundColor = "skyblue";
+
+            if (isWin("skyblue")) {
+                setTimeout(function () {   
+                    showMsg("유저 승리!");
+                }, 100);
+                return;
+            }
+            if (isDraw()) {
+                return;
+            }
+            com();
+
+        });
+
+        // 순서 정하기
+        function com() {
+
+            if (forb()) {
+                if (isWin("tomato")) {
+                    showMsg("Com 승리!");
+                }
+                return;
+            }
+
+            // 색칠되지 않은 칸을 com이 색칠
+            const comArr = Array.from(td).filter(function (a) {
+                return a.style.backgroundColor === "";
+            });
+
+            // 더 색칠할 칸이 없으면 종료
+            if (comArr.length === 0) {
+                return;
+            }
+
+            // 랜덤 칸을 색칠
+            setTimeout(() => {
+                const rand = Math.floor(Math.random() * comArr.length);
+                comArr[rand].style.backgroundColor = "tomato";
+
+                if (isWin("tomato")) {
+                    showMsg("Com 승리!");
+                    return;
+                }
+                isDraw();
+
+            }, 1000);
+        }
+
+        // Com이 User의 승리를 막기
+        function forb() {
+            const check1 = [td[0], td[3], td[6]];
+            let count1 = 0;
+
+            for (let i = 0; i < check1.length; i++) {
+                if (check1[i].style.backgroundColor === "skyblue") {
+                    count1++;
+                }
+            }
+
+            if (count1 === 2) {
+                for (let i = 0; i < check1.length; i++) {
+                    if (check1[i].style.backgroundColor === "") {
+                        check1[i].style.backgroundColor = "tomato";
+                        return true;
+                    }
+                }
+            }
+
+            const check2 = [td[1], td[4], td[7]];
+            let count2 = 0;
+
+            for (let i = 0; i < check2.length; i++) {
+                if (check2[i].style.backgroundColor === "skyblue") {
+                    count2++;
+                }
+            }
+
+            if (count2 === 2) {
+                for (let i = 0; i < check2.length; i++) {
+                    if (check2[i].style.backgroundColor === "") {
+                        check2[i].style.backgroundColor = "tomato";
+                        return true;
+                    }
+                }
+            }
+
+            const check3 = [td[2], td[5], td[8]];
+            let count3 = 0;
+
+            for (let i = 0; i < check3.length; i++) {
+                if (check3[i].style.backgroundColor === "skyblue") {
+                    count3++;
+                }
+            }
+
+            if (count3 === 2) {
+                for (let i = 0; i < check3.length; i++) {
+                    if (check3[i].style.backgroundColor === "") {
+                        check3[i].style.backgroundColor = "tomato";
+                        return true;
+                    }
+                }
+            }
+
+            const check4 = [td[0], td[1], td[2]];
+            let count4 = 0;
+
+            for (let i = 0; i < check4.length; i++) {
+                if (check4[i].style.backgroundColor === "skyblue") {
+                    count4++;
+                }
+            }
+
+            if (count4 === 2) {
+                for (let i = 0; i < check4.length; i++) {
+                    if (check4[i].style.backgroundColor === "") {
+                        check4[i].style.backgroundColor = "tomato";
+                        return true;
+                    }
+                }
+            }
+
+            const check5 = [td[3], td[4], td[5]];
+            let count5 = 0;
+
+            for (let i = 0; i < check5.length; i++) {
+                if (check5[i].style.backgroundColor === "skyblue") {
+                    count5++;
+                }
+            }
+
+            if (count5 === 2) {
+                for (let i = 0; i < check5.length; i++) {
+                    if (check5[i].style.backgroundColor === "") {
+                        check5[i].style.backgroundColor = "tomato";
+                        return true;
+                    }
+                }
+            }
+
+            const check6 = [td[6], td[7], td[8]];
+            let count6 = 0;
+
+            for (let i = 0; i < check6.length; i++) {
+                if (check6[i].style.backgroundColor === "skyblue") {
+                    count6++;
+                }
+            }
+
+            if (count6 === 2) {
+                for (let i = 0; i < check6.length; i++) {
+                    if (check6[i].style.backgroundColor === "") {
+                        check6[i].style.backgroundColor = "tomato";
+                        return true;
+                    }
+                }
+            }
+
+            const check7 = [td[0], td[4], td[8]];
+            let count7 = 0;
+
+            for (let i = 0; i < check7.length; i++) {
+                if (check7[i].style.backgroundColor === "skyblue") {
+                    count7++;
+                }
+            }
+
+            if (count7 === 2) {
+                for (let i = 0; i < check7.length; i++) {
+                    if (check7[i].style.backgroundColor === "") {
+                        check7[i].style.backgroundColor = "tomato";
+                        return true;
+                    }
+                }
+            }
+
+            const check8 = [td[2], td[4], td[6]];
+            let count8 = 0;
+
+            for (let i = 0; i < check8.length; i++) {
+                if (check8[i].style.backgroundColor === "skyblue") {
+                    count8++;
+                }
+            }
+
+            if (count8 === 2) {
+                for (let i = 0; i < check8.length; i++) {
+                    if (check8[i].style.backgroundColor === "") {
+                        check8[i].style.backgroundColor = "tomato";
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        function isDraw() {
+            let colorCount = 0;
+
+            for (let i = 0; i < td.length; i++) {
+                if (td[i].style.backgroundColor !== "") {
+                    colorCount++;
+                }
+            }
+
+            if (colorCount === 9) {
+                showMsg("무승부...");
+                return true;
+            }
+            return false;
+        }
+
+        // 세 칸이 모두 color 색이면 true
+        function checkLine(a, b, c, color) {
+            if (a.style.backgroundColor === color &&
+                b.style.backgroundColor === color &&
+                c.style.backgroundColor === color) {
+                return true;
+            }
+            return false;
+        }
+
+        // 같은 색 3개면 승리
+        function isWin(color) {
+            if (checkLine(td[0], td[1], td[2], color)) {
+                return true;
+            }
+            if (checkLine(td[3], td[4], td[5], color)) {
+                return true;
+            }
+            if (checkLine(td[6], td[7], td[8], color)) {
+                return true;
+            }
+            if (checkLine(td[0], td[3], td[6], color)) {
+                return true;
+            }
+            if (checkLine(td[1], td[4], td[7], color)) {
+                return true;
+            }
+            if (checkLine(td[2], td[5], td[8], color)) {
+                return true;
+            }
+            if (checkLine(td[0], td[4], td[8], color)) {
+                return true;
+            }
+            if (checkLine(td[2], td[4], td[6], color)) {
+                return true;
+            }
+            return false;
+        }
+
+    </script>
+</body>
+
+</html>

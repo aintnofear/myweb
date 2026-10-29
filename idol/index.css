@@ -1,0 +1,249 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+li{
+    list-style-type: none;
+}
+
+/*  */
+
+header{
+    height: 166px;
+}
+.box{
+    width: 1100px;
+    margin: 0 auto;
+}
+.wrap{
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+/*  */
+
+#logo{
+    float: left;
+    margin: 80px 0 0 60px;
+}
+#menu{
+    float: right;
+    text-align: right;
+    margin-right: 20px;
+}
+#menu li{
+    display: inline-block;
+}
+#main_menu li{
+    margin: 30px 0 0 10px;
+}
+#sub_menu li{
+    margin: 50px 0 0 80px;
+    font-size: 20px;
+}
+
+.menu2{
+    display: flex;
+    background-color: #333;
+    justify-content: center;
+    width: 100%;
+    list-style: none;
+}
+.menu2 a{
+    text-decoration: none;
+    color: black;
+}
+.menu2 > li{
+    position: relative;
+}
+.menu2 >li > a{
+    display: block;
+    padding: 15px 30px;
+    color: white;
+}
+
+.sub-menu{
+    display: none;
+
+    position: absolute;
+    top: 100%;
+    left: 0;
+
+    width: 150px;
+    background-color: white;
+    border: 1px solid #ddd;
+
+    text-align: center;
+}
+
+.menu2 > li:hover .sub-menu{
+    display: block;
+}
+.sub-menu a{
+    display: block;
+    padding: 10px;
+}
+.sub-menu a:hover{
+    background-color: #eee;
+}
+
+/*  */
+
+#main_image{
+    width: 100%;
+    text-align: center;
+    margin: 20px 0;
+}
+#main_image img{
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/*  */
+
+.card{
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    box-sizing: border-box;
+}
+
+.card .kit-img{
+    width: 100%;
+    height: auto;
+    max-height: 350px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-top: 15px;
+    display: block;
+}
+
+.card .title, .card .title2{
+    padding-bottom: 8px;
+    border-bottom: solid 1px #eee;
+    margin-bottom: 15px;
+}
+
+.card .card-img{
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin-top: 15px;
+    display: block;
+}
+
+/*  */
+
+aside{
+    width: 48%;
+    float: none;
+    margin: 70px 0;
+    box-sizing: border-box;
+}
+aside .intro{
+    padding: 12px;
+    background-color: skyblue;
+    color: white;
+    font-size: 18px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+aside .comment{
+    padding: 20px 10px;
+    line-height: 150%;
+}
+
+/*  */
+
+#main{
+    width: 48%;
+    float: none;
+    margin: 70px 0;
+    box-sizing: border-box;
+}
+
+
+/*  */
+
+#main1 .title{
+    padding-bottom: 8px;
+    border-bottom: solid 1px black;
+}
+#main1 .song{
+    margin-top: 15px;
+}
+#main1 .items{
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px 0;
+    border-bottom: 1px dashed #eee;
+}
+#main .cover{
+    width: 50px;
+    height: 50px;
+    border: 1px solid #ddd;
+}
+#main .song-info{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+#main1 .items .name{
+    font-size: bold;
+    color: #333;
+    left: 0;
+    top: 0;
+}
+#main1 .items .date{
+    font-size: 13px;
+    color: #888;
+    right: 0;
+    bottom: 0;
+}
+#main1 .title2{
+    margin-top: 30px;
+    padding-bottom: 8px;
+    border-bottom: solid 1px black;
+}
+
+/*  */
+
+footer{
+    clear: both;
+    height: 260px;
+    background-color: #f8f9fa;
+    border-top: 1px solid #ddd;
+    padding: 40px 0;
+    color: black;
+}
+#bottom_menu ul{
+    padding: 20px 0 0 100px;
+    font-weight: bold;
+}
+#bottom_menu li{
+    display: inline;
+    margin-right: 30px;
+}
+footer .items{
+    float: left;
+    margin: 40px 0 0 100px;
+}
+footer h3{
+    color: blue;
+}
+footer .items ul{
+    margin-top: 15px;
+}
+footer .items li{
+    margin-top: 5px;
+}
+footer .phone{
+    font-size: 25px;
+    font-weight: bold;
+}

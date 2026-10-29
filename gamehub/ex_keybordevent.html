@@ -1,0 +1,183 @@
+<style>
+    #box {
+        border: 1px solid black;
+        width: 600px;
+        height: 400px;
+        position: relative;
+        overflow: hidden;      /* 박스 밖으로 나간 상자는 안 보이게 */
+    }
+
+    #square {
+        border: 1px solid black;
+        width: 50px;
+        height: 50px;
+        position: absolute;
+        margin: 0;
+        background: gold;      /* 색은 마음대로 바꾸세요 */
+    }
+
+    .block {
+        width: 50px;
+        height: 50px;
+        position: absolute;
+        background: #2f5597;   /* 색은 마음대로 바꾸세요 */
+    }
+</style>
+
+<p id="info">시작 버튼을 눌러 주세요</p>
+<button id="startBtn">게임 시작</button>   <!-- ★ ④ 수정: onclick 삭제 (아래 스크립트에서 연결) -->
+<button onclick="loadDoc()">다시 시작</button>   <!-- ★ ⑤ 수정: location.reload() → loadDoc() -->
+
+<div id="box">
+    <p id="square"></p>
+</div>
+
+<h3>상위 5개 기록</h3>
+<ol id="ranking"></ol>
+
+<script>
+    // ★ ① 수정: 전체를 (function () { ... })(); 로 감쌈 (게임을 다시 불러와도 const 이름이 겹치지 않게)
+    (function () {
+        const box = document.getElementById('box');
+        const square = document.getElementById('square');
+        const info = document.getElementById('info');
+        const startBtn = document.getElementById('startBtn');
+
+        // ===== 설정값: 여기 숫자만 바꿔서 난이도 조절 =====
+        const spawnInterval = 1000;   // N초마다 새 상자 (1000 = 1초)
+        const startSpeed = 3;         // 처음 떨어지는 속도
+        const speedUp = 0.2;          // 1초 살아남을 때마다 빨라지는 정도
+        const maxSpeed = 15;          // 너무 빨라지지 않게 최고 속도 제한
+        const playerSpeed = 5;        // 네모가 움직이는 속도
+        const blockSize = 50;         // 떨어지는 상자 크기 (CSS의 .block 크기와 같게)
+
+        // 네모 시작 위치: 박스 아래쪽 가운데
+        let x = (box.clientWidth - square.offsetWidth) / 2;
+        let y = box.clientHeight - square.offsetHeight;
+
+        // 시작 버튼을 누르기 전에도 네모가 시작 위치에 보이게
+        square.style.left = x + "px";
+        square.style.top = y + "px";
+
+        const blocks = [];            // 지금 떨어지고 있는 상자들
+        // ★ ② 삭제: const keys = {}; 와 keydown / keyup 등록 (메인 페이지에 있는 걸 씀)
+        let startTime = 0;
+        let lastSpawn = 0;
+
+        // 저장된 기록을 불러오기 (없으면 빈 배열)
+        function loadRecords() {
+            const saved = localStorage.getItem('records1');   // ★ ⑥ 수정: 'records' → 'records1'
+            if (saved == null) {
+                return [];
+            }
+            return JSON.parse(saved);
+        }
+
+        // 순위를 화면에 표시
+        function showRanking() {
+            const records = loadRecords();
+            let html = "";
+            for (let i = 0; i < records.length; i++) {
+                html = html + "<li>" + records[i].toFixed(1) + "초</li>";
+            }
+            document.getElementById('ranking').innerHTML = html;
+        }
+
+        // 두 요소가 겹쳤는지 검사
+        function isHit(a, b) {
+            const r1 = a.getBoundingClientRect();
+            const r2 = b.getBoundingClientRect();
+            return r1.left < r2.right && r1.right > r2.left
+                && r1.top < r2.bottom && r1.bottom > r2.top;
+        }
+
+        function gameOver(elapsed) {
+            clearInterval(timer);   // 메인 페이지의 timer 를 씀
+            info.innerText = "게임 종료! " + elapsed.toFixed(1) + "초 생존";
+
+            // 이번 기록을 넣고, 오래 산 순서로 정렬해서 상위 5개만 저장
+            const records = loadRecords();
+            records.push(elapsed);
+            records.sort(function (a, b) { return b - a; });
+            const top5 = records.slice(0, 5);
+            localStorage.setItem('records1', JSON.stringify(top5));   // ★ ⑥ 수정: 'records1'
+
+            showRanking();
+        }
+
+        // 0.02초(20ms)마다 계속 실행되는 함수
+        function update() {
+            const now = Date.now();
+            const elapsed = (now - startTime) / 1000;   // 살아남은 시간(초)
+
+            // 떨어지는 속도: 살아남은 시간이 길수록 빨라짐
+            let speed = startSpeed + elapsed * speedUp;
+            if (speed > maxSpeed) {
+                speed = maxSpeed;
+            }
+
+            // 1) 네모 이동 (눌려 있는 키에 따라)
+            if (keys['ArrowLeft']) { x = x - playerSpeed; }
+            if (keys['ArrowRight']) { x = x + playerSpeed; }
+            if (keys['ArrowUp']) { y = y - playerSpeed; }
+            if (keys['ArrowDown']) { y = y + playerSpeed; }
+
+            // 박스 밖으로 못 나가게
+            const maxX = box.clientWidth - square.offsetWidth;
+            const maxY = box.clientHeight - square.offsetHeight;
+            if (x < 0) { x = 0; }
+            if (y < 0) { y = 0; }
+            if (x > maxX) { x = maxX; }
+            if (y > maxY) { y = maxY; }
+
+            square.style.left = x + "px";
+            square.style.top = y + "px";
+
+            // 2) N초마다 맨 위 아무 자리에서나 새 상자 만들기
+            if (now - lastSpawn >= spawnInterval) {
+                lastSpawn = now;
+
+                const el = document.createElement('div');
+                el.className = 'block';
+                el.style.left = Math.floor(Math.random() * (box.clientWidth - blockSize)) + "px";
+                el.style.top = "0px";
+                box.appendChild(el);
+
+                blocks.push({ el: el, y: 0 });
+            }
+
+            // 3) 상자 떨어뜨리기 + 부딪혔는지 검사
+            for (let i = blocks.length - 1; i >= 0; i--) {
+                blocks[i].y = blocks[i].y + speed;
+                blocks[i].el.style.top = blocks[i].y + "px";
+
+                // 바닥까지 내려간 상자는 삭제
+                if (blocks[i].y > box.clientHeight) {
+                    blocks[i].el.remove();
+                    blocks.splice(i, 1);
+                    continue;
+                }
+
+                // 네모에 닿으면 게임 종료
+                if (isHit(square, blocks[i].el)) {
+                    gameOver(elapsed);
+                    return;
+                }
+            }
+
+            info.innerText = "생존 시간: " + elapsed.toFixed(1) + "초";
+        }
+
+        // ★ ③ 삭제: let timer;  (메인 페이지의 timer 를 쓰니까 여기서 또 만들면 안 됨)
+
+        function startGame() {
+            startTime = Date.now();       // 이 순간부터 시간 재기 시작
+            lastSpawn = Date.now();
+            startBtn.disabled = true;     // 중복으로 눌러서 게임이 두 개 돌지 않게 버튼 잠금
+            timer = setInterval(update, 20);
+        }
+
+        startBtn.addEventListener('click', startGame);   // ★ ④ 추가: 시작 버튼 연결
+        showRanking();   // 페이지를 열면 지난 기록부터 표시
+    })();   // ★ ① 여기까지가 감싼 범위
+</script>

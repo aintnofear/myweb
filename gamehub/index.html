@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게임허브</title>
+    <style>
+        /* 기본 레이아웃 및 폰트 설정 */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 40px;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 헤더 스타일 */
+        h1 {
+            font-size: 1.2rem;
+            /* 전체 기본 제목 글자는 작게 */
+            color: #7f8c8d;
+            margin-bottom: 10px;
+            text-align: center;
+            font-weight: normal;
+        }
+
+        /* AJAX 글자 크게 및 포인트 컬러 적용 */
+        h1 .title-ajax {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #e06d74;
+            /* 부드러운 코랄 로즈 계열 */
+        }
+
+        /* 괄호 안의 글자 기본 크기 */
+        h1 .title-sub {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+        }
+
+        /* 아, 자, 스 글자만 크게 및 포인트 컬러 적용 */
+        h1 .highlight {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #e06d74;
+            /* 부드러운 코랄 로즈 계열 */
+        }
+
+        hr {
+            width: 100%;
+            max-width: 600px;
+            border: 0;
+            height: 2px;
+            background: #ddd;
+            margin-bottom: 30px;
+        }
+
+        /* 메뉴 버튼 리스트 스타일 */
+        #menu {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 30px 0;
+            display: flex;
+            gap: 15px;
+        }
+
+        #menu li button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 버튼 마우스 오버(Hover) 효과 */
+        #menu li button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        /* 버튼 클릭 시 효과 */
+        #menu li button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 콘텐츠가 로드되는 메인 페이지 영역 스타일 */
+        #mainpage {
+            max-width: 700px;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            min-height: 150px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>
+        프로젝트 : <span class="title-ajax">AJAX</span>
+        <span class="title-sub">(<span class="highlight">아</span>리가또고<span class="highlight">자</span>이마<span
+                class="highlight">스</span>)</span>
+    </h1>
+    <hr>
+
+    <ul id="menu">
+        <li><button onclick="loadDoc()">아</button></li>
+        <li><button onclick="loadDoc2()">자</button></li>
+        <li><button onclick="loadDoc3()">스</button></li>
+    </ul>
+
+    <div id="mainpage"></div>
+
+    <script>
+
+        let timer;
+        const keys = {};
+
+        document.addEventListener('keydown', function (e) { keys[e.key] = true; });
+        document.addEventListener('keyup', function (e) { keys[e.key] = false; });
+
+        function loadDoc() {
+            const xhttp1 = new XMLHttpRequest();
+
+            xhttp1.open("GET", "ex_keybordevent.html", true);
+
+            xhttp1.onload = function () {
+                const mainpage = document.getElementById('mainpage');
+                mainpage.innerHTML = xhttp1.responseText;
+
+                const scripts = mainpage.getElementsByTagName('script');
+                for (let i = 0; i < scripts.length; i++) {
+                    const game1 = document.createElement('script');
+                    game1.textContent = scripts[i].textContent;
+                    document.body.appendChild(game1);
+                    game1.remove();
+                }
+            };
+
+            xhttp1.send();
+        }
+        function loadDoc2() {
+            const xhttp2 = new XMLHttpRequest();
+
+            xhttp2.open("GET", "gameTwo.html", true);
+
+            xhttp2.onload = function () {
+                const mainpage = document.getElementById('mainpage');
+                mainpage.innerHTML = xhttp2.responseText;
+
+                const scripts = mainpage.getElementsByTagName('script');
+                for (let i = 0; i < scripts.length; i++) {
+                    const game2 = document.createElement('script');
+                    game2.textContent = scripts[i].textContent;
+                    document.body.appendChild(game2);
+                    game2.remove();
+                }
+            };
+
+            xhttp2.send();
+        }
+        function loadDoc3() {
+            const xhttp3 = new XMLHttpRequest();
+
+            xhttp3.open("GET", "gameThree.html", true);
+
+            xhttp3.onload = function () {
+                const mainpage = document.getElementById('mainpage');
+                mainpage.innerHTML = xhttp3.responseText;
+
+                const scripts = mainpage.getElementsByTagName('script');
+                for (let i = 0; i < scripts.length; i++) {
+                    const game3 = document.createElement('script');
+                    game3.textContent = scripts[i].textContent;
+                    document.body.appendChild(game3);
+                    game3.remove();
+                }
+            };
+
+            xhttp3.send();
+        }
+
+
+    </script>
+</body>
+
+</html>

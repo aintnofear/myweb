@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>가위바위보</title>
+    <style>
+        body {
+            width: 500px;
+            height: 400px;
+            align-items: center;
+            border: solid 1px black;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #show {
+            display: flex;
+        }
+
+        #com,
+        #user {
+            width: 200px;
+            height: 300px;
+            text-align: center;
+        }
+
+        #comimg,
+        #userimg {
+            width: 200px;
+            height: 200px;
+            padding: 10px auto;
+            border: solid 1px black;
+        }
+
+        #put {
+            text-align: center;
+            margin-bottom: 0px;
+        }
+
+        button {
+            width: 100px;
+            height: 30px;
+            margin: auto 10px;
+        }
+
+        #result {
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="show">
+        <div id="com">
+            <p>COM</p>
+            <img id="comimg" src="imges/question.png">
+        </div>
+
+        <h3>VS</h3>
+
+        <div id="user">
+            <p>USER</p>
+            <img id="userimg" src="imges/question.png">
+        </div>
+    </div>
+
+    <div id="put">
+        <button id="button1" type="button">가위</button>
+        <button id="button2" type="button">바위</button>
+        <button id="button3" type="button">보</button>
+    </div>
+
+    <div id="result">
+        결과 출력
+    </div>
+    <script>
+        // 1. 가위 2. 바위 3. 보
+
+        const button1 = document.getElementById("button1");
+        const button2 = document.getElementById("button2");
+        const button3 = document.getElementById("button3");
+
+
+        let ch;
+
+        button1.addEventListener('click', f)
+
+        button2.addEventListener('click', f2)
+
+        button3.addEventListener('click', f3)
+
+        function game() {
+
+            let com = Math.floor(Math.random() * 3) + 1;
+            const resultShow = document.getElementById("result");
+
+            if (com === 1) {
+                ff();
+            } else if (com === 2) {
+                ff2();
+            } else {
+                ff3();
+            }
+
+            if (ch === com) {
+
+                resultShow.textContent = "비겼습니다.";
+            } else if (ch === 1 && com === 2) {
+                resultShow.textContent = "com이 이겼습니다.";
+            } else if (ch === 1 && com === 3) {
+                resultShow.textContent = "user가 이겼습니다.";
+            } else if (ch === 2 && com === 1) {
+                resultShow.textContent = "user가 이겼습니다.";
+            } else if (ch === 2 && com === 3) {
+                resultShow.textContent = "com이 이겼습니다.";
+            } else if (ch === 3 && com === 1) {
+                resultShow.textContent = "com이 이겼습니다.";
+            } else if (ch === 3 && com == 2) {
+                resultShow.textContent = "user가 이겼습니다.";
+            }
+        }
+
+
+        function f() {
+            const img = document.getElementById("userimg");
+            img.src = "imges/scissors.PNG";
+            ch = 1;
+            game();
+        }
+        function f2() {
+            const img = document.getElementById("userimg");
+            img.src = "imges/rock.PNG";
+            ch = 2;
+            game();
+        }
+        function f3() {
+            const img = document.getElementById("userimg");
+            img.src = "imges/paper.PNG";
+            ch = 3;
+            game();
+        }
+
+        function ff() {
+            const img = document.getElementById("comimg");
+            img.src = "imges/scissors.PNG";
+        }
+        function ff2() {
+            const img = document.getElementById("comimg");
+            img.src = "imges/rock.PNG";
+        }
+        function ff3() {
+            const img = document.getElementById("comimg");
+            img.src = "imges/paper.PNG";
+        }
+    </script>
+</body>
+
+</html>
